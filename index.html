@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Next Generation Cloud Platform</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'pulse-glow': 'pulseGlow 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-14px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: 0.4 },
+                            '50%': { opacity: 0.8 },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Custom Glassmorphism Utilities */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .dark .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-widget {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
+        .dark .glass-widget {
+            background: rgba(15, 23, 42, 0.85);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 min-h-screen antialiased selection:bg-brand-500 selection:text-white">
+
+    <div id="toastContainer" class="fixed top-20 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <header class="sticky top-0 z-40 w-full glass-nav border-b border-slate-200/80 dark:border-slate-800/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform duration-300">
+                    <i class="fa-solid fa-cube text-xl"></i>
+                </div>
+                <span class="text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-brand-600 to-indigo-600 dark:from-white dark:via-indigo-300 dark:to-purple-400">
+                    Nexus
+                </span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="#features" class="text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-500 transition-colors">Features</a>
+                <a href="#analytics" class="text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-500 transition-colors">Platform</a>
+                <a href="#pricing" class="text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-500 transition-colors">Pricing</a>
+                <a href="#testimonials" class="text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-500 transition-colors">Reviews</a>
+            </nav>
+
+            <!-- Actions Right -->
+            <div class="hidden md:flex items-center gap-4">
+                <!-- Theme Toggle Button -->
+                <button id="themeToggleBtn" aria-label="Toggle dark/light theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon"></i>
+                </button>
+
+                <!-- Get Started CTA -->
+                <button onclick="handleCtaClick('Get Started Nav')" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-200">
+                    Get Started
+                </button>
+            </div>
+
+            <!-- Mobile Hamburger Button -->
+            <div class="flex items-center gap-3 md:hidden">
+                <button id="mobileThemeToggleBtn" aria-label="Toggle dark/light theme mobile" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
+                    <i id="mobileThemeToggleIcon" class="fa-solid fa-moon"></i>
+                </button>
+                <button id="mobileMenuBtn" aria-label="Open menu" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobileDrawer" class="hidden md:hidden border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl px-4 pt-4 pb-6 space-y-4">
+            <a href="#features" class="mobile-link block px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Features</a>
+            <a href="#analytics" class="mobile-link block px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Platform</a>
+            <a href="#pricing" class="mobile-link block px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Pricing</a>
+            <a href="#testimonials" class="mobile-link block px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Reviews</a>
+            <div class="pt-2">
+                <button onclick="handleCtaClick('Mobile Get Started')" class="w-full py-3 rounded-xl bg-brand-600 text-white font-semibold shadow-lg shadow-brand-500/25">
+                    Get Started Free
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative pt-12 pb-20 md:pt-20 md:pb-32 overflow-hidden">
+        <!-- Glow background accents -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-brand-500/20 to-purple-500/20 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse-glow"></div>
+        <div class="absolute top-1/3 left-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-2xl pointer-events-none -z-10"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            
+            <!-- Announcement Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-300 text-xs sm:text-sm font-semibold mb-8 hover:bg-brand-500/20 transition-all cursor-pointer">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
+                </span>
+                <span>New Feature Release: AI Workflow Orchestrator 2.0</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </div>
+
+            <!-- Main Headline -->
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-5xl mx-auto leading-[1.15]">
+                Accelerate your product delivery with 
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-indigo-500 to-purple-600 dark:from-brand-300 dark:via-indigo-300 dark:to-purple-300">
+                    intelligent automation
+                </span>
+            </h1>
+
+            <!-- Subheadline -->
+            <p class="mt-6 text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto font-normal leading-relaxed">
+                Nexus integrates real-time telemetry, automated pipelines, and continuous deployment into a single unified workspace. Build faster without compromising security.
+            </p>
+
+            <!-- Hero Action Buttons -->
+            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="handleCtaClick('Start Free Trial')" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-base shadow-xl shadow-brand-500/30 hover:shadow-brand-500/50 hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-3">
+                    <span>Start 14-Day Free Trial</span>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+                
+                <button id="watchDemoBtn" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-800 dark:text-slate-100 font-semibold text-base transition-all duration-200 flex items-center justify-center gap-3 shadow-md">
+                    <div class="w-7 h-7 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+                        <i class="fa-solid fa-play text-xs pl-0.5"></i>
+                    </div>
+                    <span>Watch Interactive Demo</span>
+                </button>
+            </div>
+
+            <!-- Trust Micro-text -->
+            <p class="mt-4 text-xs text-slate-500 dark:text-slate-400">
+                No credit card required • 2-minute setup • Cancel anytime
+            </p>
+
+            <div id="analytics" class="mt-16 sm:mt-20 relative max-w-5xl mx-auto">
+                
+                <!-- Floating Glassmorphism Cards -->
+                <div class="hidden lg:flex absolute -top-8 -left-10 z-20 glass-widget p-4 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 items-center gap-4 animate-float">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Monthly Revenue</p>
+                        <p class="text-lg font-bold text-slate-800 dark:text-white">$128,450 <span class="text-xs font-medium text-emerald-500">+24.8%</span></p>
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex absolute -bottom-8 -right-10 z-20 glass-widget p-4 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 items-center gap-4 animate-float-delayed">
+                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Deployment Speed</p>
+                        <p class="text-lg font-bold text-slate-800 dark:text-white">1.2 seconds <span class="text-xs font-medium text-brand-500">⚡ 10x Faster</span></p>
+                    </div>
+                </div>
+
+                <!-- Dashboard Shell Container -->
+                <div class="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-900/90 shadow-2xl overflow-hidden text-left p-2 sm:p-4 backdrop-blur-xl">
+                    <!-- Browser Chrome Header -->
+                    <div class="flex items-center justify-between pb-3 px-3 border-b border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                        </div>
+                        <div class="bg-slate-800/80 rounded-lg px-4 py-1 text-xs text-slate-400 font-mono flex items-center gap-2">
+                            <i class="fa-solid fa-lock text-emerald-400 text-[10px]"></i>
+                            nexus-app.cloud/dashboard
+                        </div>
+                        <div class="text-slate-500 text-xs flex gap-2">
+                            <i class="fa-solid fa-minus"></i>
+                            <i class="fa-solid fa-square"></i>
+                            <i class="fa-solid fa-xmark"></i>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Content Mock -->
+                    <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-950/60 rounded-b-xl">
+                        
+                        <!-- Left Chart Mock -->
+                        <div class="md:col-span-2 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-white font-semibold text-sm">System Velocity & Load</h3>
+                                    <p class="text-slate-400 text-xs">Real-time throughput metrics</p>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">Optimal</span>
+                            </div>
+
+                            <!-- Mock Chart Bars -->
+                            <div class="h-44 sm:h-52 flex items-end justify-between gap-2 pt-6 px-2">
+                                <div class="w-full bg-brand-500/20 hover:bg-brand-500/40 rounded-t-md transition-all h-[40%] relative group"><div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-[10px] text-white px-2 py-0.5 rounded">40%</div></div>
+                                <div class="w-full bg-brand-500/30 hover:bg-brand-500/50 rounded-t-md transition-all h-[65%] relative group"><div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-[10px] text-white px-2 py-0.5 rounded">65%</div></div>
+                                <div class="w-full bg-brand-500/20 hover:bg-brand-500/40 rounded-t-md transition-all h-[50%] relative group"><div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-[10px] text-white px-2 py-0.5 rounded">50%</div></div>
+                                <div class="w-full bg-brand-500/50 hover:bg-brand-500/70 rounded-t-md transition-all h-[85%] relative group"><div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-[10px] text-white px-2 py-0.5 rounded">85%</div></div>
+                                <div class="w-full bg-brand-500 hover:bg-brand-400 rounded-t-md transition-all h-[95%] relative group"><div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-[10px] text-white px-2 py-0.5 rounded">95%</div></div>
+                                <div class="w-full bg-brand-500/40 hover:bg-brand-500/60 rounded-t-md transition-all h-[70%] relative group"><div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-[10px] text-white px-2 py-0.5 rounded">70%</div></div>
+                                <div class="w-full bg-indigo-500 hover:bg-indigo-400 rounded-t-md transition-all h-[100%] relative group"><div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-[10px] text-white px-2 py-0.5 rounded">100%</div></div>
+                            </div>
+                        </div>
+
+                        <!-- Right Status Sidebar Mock -->
+                        <div class="space-y-3 border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
+                            <h4 class="text-slate-300 font-semibold text-xs tracking-wider uppercase">Active Services</h4>
+                            
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">API</div>
+                                    <div>
+                                        <p class="text-xs font-semibold text-white">Gateway East</p>
+                                        <p class="text-[10px] text-slate-400">99.99% Uptime</p>
+                                    </div>
+                                </div>
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            </div>
+
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">DB</div>
+                                    <div>
+                                        <p class="text-xs font-semibold text-white">Postgres Cluster</p>
+                                        <p class="text-[10px] text-slate-400">Latency 1.4ms</p>
+                                    </div>
+                                </div>
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            </div>
+
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs">AI</div>
+                                    <div>
+                                        <p class="text-xs font-semibold text-white">Inference Engine</p>
+                                        <p class="text-[10px] text-slate-400">Processing Tasks</p>
+                                    </div>
+                                </div>
+                                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="py-12 border-y border-slate-200/60 dark:border-slate-800/60 bg-slate-100/50 dark:bg-slate-900/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-8">
+                Trusted by high-growth engineering teams worldwide
+            </p>
+
+            <!-- Brand Logos -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 items-center opacity-75 grayscale hover:grayscale-0 transition-all duration-300">
+                <div class="flex items-center justify-center gap-2 font-bold text-xl text-slate-600 dark:text-slate-300"><i class="fa-solid fa-layer-group text-brand-500"></i> AcmeCorp</div>
+                <div class="flex items-center justify-center gap-2 font-bold text-xl text-slate-600 dark:text-slate-300"><i class="fa-solid fa-shield-halved text-brand-500"></i> ApexData</div>
+                <div class="flex items-center justify-center gap-2 font-bold text-xl text-slate-600 dark:text-slate-300"><i class="fa-solid fa-bolt-lightning text-brand-500"></i> Veloce</div>
+                <div class="flex items-center justify-center gap-2 font-bold text-xl text-slate-600 dark:text-slate-300"><i class="fa-solid fa-cloud text-brand-500"></i> CloudX</div>
+                <div class="flex items-center justify-center gap-2 font-bold text-xl text-slate-600 dark:text-slate-300"><i class="fa-solid fa-infinity text-brand-500"></i> SyncFlow</div>
+                <div class="flex items-center justify-center gap-2 font-bold text-xl text-slate-600 dark:text-slate-300"><i class="fa-solid fa-microchip text-brand-500"></i> Quantum</div>
+            </div>
+
+            <!-- Stats Ribbon -->
+            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-slate-200/50 dark:border-slate-800/50 text-center">
+                <div>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">99.99%</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Uptime Guarantee SLA</p>
+                </div>
+                <div>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">10M+</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Daily API Calls</p>
+                </div>
+                <div>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">50k+</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Developers Active</p>
+                </div>
+                <div>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">&lt; 15ms</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Global Edge Latency</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="features" class="py-20 sm:py-28 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest mb-3">Engineered For Performance</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Everything you need to ship enterprise software</p>
+                <p class="mt-4 text-slate-600 dark:text-slate-300 text-base sm:text-lg">Nexus removes friction from your engineering stack with unified tools designed for modern tech teams.</p>
+            </div>
+
+            <!-- Features 6-Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Feature Card 1 -->
+                <div class="glass-card p-8 rounded-2xl hover:border-brand-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">AI Intelligence Agent</h3>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Automate repetitive code reviews, detect infrastructure bottlenecks, and get automated recommendations instantly.</p>
+                </div>
+
+                <!-- Feature Card 2 -->
+                <div class="glass-card p-8 rounded-2xl hover:border-brand-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Global Edge Deployment</h3>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Distribute application logic across over 300 edge locations worldwide with single-click multi-region replication.</p>
+                </div>
+
+                <!-- Feature Card 3 -->
+                <div class="glass-card p-8 rounded-2xl hover:border-brand-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-shield-cat"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Zero-Trust Security</h3>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">SOC2 Type II certified out of the box with automated secret rotation, role-based access, and granular audit logs.</p>
+                </div>
+
+                <!-- Feature Card 4 -->
+                <div class="glass-card p-8 rounded-2xl hover:border-brand-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Automated Pipelines</h3>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Define workflows using simple code syntax. Trigger builds, runs, and rollbacks seamlessly with instant feedback.</p>
+                </div>
+
+                <!-- Feature Card 5 -->
+                <div class="glass-card p-8 rounded-2xl hover:border-brand-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Real-time Telemetry</h3>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Stream traces, metrics, and logs in real time with zero-latency visual dashboards and custom alerting rules.</p>
+                </div>
+
+                <!-- Feature Card 6 -->
+                <div class="glass-card p-8 rounded-2xl hover:border-brand-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-code-merge"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Collaborative Canvas</h3>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Work live alongside team members with shared environments, instant preview links, and interactive feedback tools.</p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section id="pricing" class="py-20 sm:py-28 bg-slate-100/70 dark:bg-slate-900/50 border-y border-slate-200/60 dark:border-slate-800/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest mb-3">Flexible Billing</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Simple, transparent plans</p>
+                <p class="mt-4 text-slate-600 dark:text-slate-300 text-base">Scale as your team grows. No hidden fees or surprise overages.</p>
+
+                <!-- Billing Toggle Switch -->
+                <div class="mt-8 inline-flex items-center gap-4 p-1.5 rounded-full bg-slate-200/80 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+                    <span id="monthlyLabel" class="text-sm font-semibold px-3 py-1 rounded-full text-slate-900 dark:text-white transition-colors cursor-pointer">Monthly</span>
+                    <button id="billingToggle" aria-label="Toggle monthly or yearly billing" class="w-14 h-8 bg-brand-600 rounded-full p-1 relative transition-colors focus:outline-none">
+                        <div id="toggleKnob" class="w-6 h-6 bg-white rounded-full transition-transform duration-300 transform translate-x-0 shadow-md"></div>
+                    </button>
+                    <span id="yearlyLabel" class="text-sm font-medium px-3 py-1 rounded-full text-slate-500 dark:text-slate-400 transition-colors cursor-pointer flex items-center gap-1.5">
+                        Yearly 
+                        <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">Save 20%</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Pricing Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+                
+                <!-- Starter Tier -->
+                <div class="glass-card p-8 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between hover:border-brand-500/40 transition-all">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Starter</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Perfect for solo developers & side projects</p>
+                        
+                        <div class="my-6">
+                            <span class="text-4xl font-extrabold text-slate-900 dark:text-white price-starter">$19</span>
+                            <span class="text-sm text-slate-500 dark:text-slate-400">/month</span>
+                        </div>
+
+                        <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-300 mb-8">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Up to 3 Projects</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> 10GB Edge Storage</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Community Support</li>
+                            <li class="flex items-center gap-3 opacity-50"><i class="fa-solid fa-xmark text-slate-400"></i> AI Agent Workflows</li>
+                            <li class="flex items-center gap-3 opacity-50"><i class="fa-solid fa-xmark text-slate-400"></i> Custom Domains</li>
+                        </ul>
+                    </div>
+
+                    <button onclick="handleCtaClick('Starter Plan')" class="w-full py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-200/50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm transition-colors">
+                        Choose Starter
+                    </button>
+                </div>
+
+                <!-- Pro Tier (Highlighted) -->
+                <div class="relative glass-card p-8 rounded-2xl border-2 border-brand-500 shadow-2xl flex flex-col justify-between transform md:-translate-y-2 bg-gradient-to-b from-brand-500/5 to-transparent">
+                    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-brand-600 text-white text-xs font-bold uppercase tracking-wider shadow-md">
+                        Most Popular
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Pro Team</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Ideal for fast-scaling startups & teams</p>
+                        
+                        <div class="my-6">
+                            <span class="text-4xl font-extrabold text-slate-900 dark:text-white price-pro">$49</span>
+                            <span class="text-sm text-slate-500 dark:text-slate-400">/month</span>
+                        </div>
+
+                        <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-300 mb-8">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Unlimited Projects</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> 250GB Edge Storage</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> AI Agent Workflows Included</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Custom SSL & Domains</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Priority 24/7 Support</li>
+                        </ul>
+                    </div>
+
+                    <button onclick="handleCtaClick('Pro Plan')" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-lg shadow-brand-500/30 transition-colors">
+                        Start Pro Free Trial
+                    </button>
+                </div>
+
+                <!-- Enterprise Tier -->
+                <div class="glass-card p-8 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between hover:border-brand-500/40 transition-all">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Enterprise</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">For large scale mission-critical workloads</p>
+                        
+                        <div class="my-6">
+                            <span class="text-4xl font-extrabold text-slate-900 dark:text-white price-enterprise">$199</span>
+                            <span class="text-sm text-slate-500 dark:text-slate-400">/month</span>
+                        </div>
+
+                        <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-300 mb-8">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Dedicated Isolated Infrastructure</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Unlimited Storage & Bandwidth</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> SOC2 & HIPAA Compliance</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Dedicated Solutions Architect</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> 99.99% Guaranteed SLA</li>
+                        </ul>
+                    </div>
+
+                    <button onclick="handleCtaClick('Enterprise Plan')" class="w-full py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-200/50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm transition-colors">
+                        Contact Sales
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section id="testimonials" class="py-20 sm:py-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest mb-3">Customer Stories</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Loved by developers worldwide</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Review Card 1 -->
+                <div class="glass-card p-8 rounded-2xl relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex gap-1 text-amber-400 mb-4">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic">
+                            "Nexus reduced our build times by over 60%. The AI workflow automation alone saved our engineering team dozens of hours every sprint."
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-800/50">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Sarah Jenkins" class="w-11 h-11 rounded-full object-cover">
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">Sarah Jenkins</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">VP of Engineering at HyperScale</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Card 2 -->
+                <div class="glass-card p-8 rounded-2xl relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex gap-1 text-amber-400 mb-4">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic">
+                            "The global edge network latency is mind-blowing. Our global customers noticed a performance boost instantly on day one."
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-800/50">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Marcus Chen" class="w-11 h-11 rounded-full object-cover">
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">Marcus Chen</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Lead Architect at CloudX</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Card 3 -->
+                <div class="glass-card p-8 rounded-2xl relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex gap-1 text-amber-400 mb-4">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic">
+                            "Migration was surprisingly painless. The DX (Developer Experience) is superior to every legacy cloud dashboard we used before."
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-800/50">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Elena Rostova" class="w-11 h-11 rounded-full object-cover">
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">Elena Rostova</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">CTO at Apex Flow</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="py-16 sm:py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-700 via-indigo-600 to-purple-700 p-8 sm:p-12 lg:p-16 text-white shadow-2xl">
+                
+                <!-- Background decorative glow -->
+                <div class="absolute -right-20 -top-20 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 max-w-3xl mx-auto text-center space-y-6">
+                    <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Ready to transform your tech stack?</h2>
+                    <p class="text-brand-100 text-base sm:text-lg">
+                        Join over 10,000 teams building faster and smarter with Nexus. Get started in minutes with zero upfront commitment.
+                    </p>
+
+                    <!-- Interactive Email Subscription Form -->
+                    <form id="newsletterForm" class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+                        <input type="email" id="emailInput" required placeholder="Enter your work email" class="w-full px-5 py-3.5 rounded-xl text-slate-900 placeholder:text-slate-400 bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-brand-300 text-sm">
+                        <button type="submit" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all whitespace-nowrap">
+                            Subscribe
+                        </button>
+                    </form>
+                    
+                    <p class="text-xs text-brand-200">We respect your privacy. Unsubscribe at any time.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-100/50 dark:bg-slate-950 pt-16 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-b border-slate-200/60 dark:border-slate-800/60">
+                
+                <!-- Brand Info Column -->
+                <div class="col-span-2 space-y-4">
+                    <a href="#" class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold">
+                            <i class="fa-solid fa-cube"></i>
+                        </div>
+                        <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Nexus</span>
+                    </a>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        The unified platform for modern software delivery. Build, deploy, and scale intelligent applications effortlessely.
+                    </p>
+                    <div class="flex gap-4 text-slate-400 text-lg">
+                        <a href="#" class="hover:text-brand-500 transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" class="hover:text-brand-500 transition-colors"><i class="fa-brands fa-github"></i></a>
+                        <a href="#" class="hover:text-brand-500 transition-colors"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="#" class="hover:text-brand-500 transition-colors"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 1 -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">Product</h4>
+                    <ul class="space-y-2.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">AI Agents</a></li>
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">Edge Engine</a></li>
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">Pricing</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 2 -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">Resources</h4>
+                    <ul class="space-y-2.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">Documentation</a></li>
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">API Reference</a></li>
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">Status Page</a></li>
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">Changelog</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3 -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">Company</h4>
+                    <ul class="space-y-2.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-brand-500 transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Copyright Bar -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-4">
+                <p>&copy; 2026 Nexus Platform Inc. All rights reserved.</p>
+                <p class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                    All Systems Operational
+                </p>
+            </div>
+
+        </div>
+    </footer>
+
+    <div id="demoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="relative w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300 id-modal-card">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-900">
+                <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-play text-brand-500"></i> Nexus Platform Demo (2 mins)
+                </h3>
+                <button id="closeModalBtn" aria-label="Close modal" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Video Mock Content -->
+            <div class="relative aspect-video bg-black flex items-center justify-center">
+                <iframe id="demoVideoIframe" class="w-full h-full" src="" title="Nexus Product Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeToggleIcon = document.getElementById('themeToggleIcon');
+        const mobileThemeToggleBtn = document.getElementById('mobileThemeToggleBtn');
+        const mobileThemeToggleIcon = document.getElementById('mobileThemeToggleIcon');
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            const iconClass = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            themeToggleIcon.className = iconClass;
+            mobileThemeToggleIcon.className = iconClass;
+            localStorage.setItem('nexus_theme', isDark ? 'dark' : 'light');
+        }
+
+        themeToggleBtn.addEventListener('click', toggleDarkMode);
+        mobileThemeToggleBtn.addEventListener('click', toggleDarkMode);
+
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileDrawer.classList.toggle('hidden');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileDrawer.classList.add('hidden');
+            });
+        });
+
+        const billingToggle = document.getElementById('billingToggle');
+        const toggleKnob = document.getElementById('toggleKnob');
+        const monthlyLabel = document.getElementById('monthlyLabel');
+        const yearlyLabel = document.getElementById('yearlyLabel');
+
+        const priceStarter = document.querySelector('.price-starter');
+        const pricePro = document.querySelector('.price-pro');
+        const priceEnterprise = document.querySelector('.price-enterprise');
+
+        let isYearly = false;
+
+        billingToggle.addEventListener('click', () => {
+            isYearly = !isYearly;
+            
+            if (isYearly) {
+                toggleKnob.style.transform = 'translateX(24px)';
+                monthlyLabel.classList.replace('text-slate-900', 'text-slate-500');
+                monthlyLabel.classList.replace('dark:text-white', 'dark:text-slate-400');
+                yearlyLabel.classList.replace('text-slate-500', 'text-slate-900');
+                yearlyLabel.classList.replace('dark:text-slate-400', 'dark:text-white');
+
+                // Dynamic Yearly Pricing (-20%)
+                priceStarter.textContent = '$15';
+                pricePro.textContent = '$39';
+                priceEnterprise.textContent = '$159';
+                showToast('Applied 20% discount on yearly billing!', 'info');
+            } else {
+                toggleKnob.style.transform = 'translateX(0px)';
+                yearlyLabel.classList.replace('text-slate-900', 'text-slate-500');
+                yearlyLabel.classList.replace('dark:text-white', 'dark:text-slate-400');
+                monthlyLabel.classList.replace('text-slate-500', 'text-slate-900');
+                monthlyLabel.classList.replace('dark:text-slate-400', 'dark:text-white');
+
+                // Monthly Pricing
+                priceStarter.textContent = '$19';
+                pricePro.textContent = '$49';
+                priceEnterprise.textContent = '$199';
+            }
+        });
+
+        const watchDemoBtn = document.getElementById('watchDemoBtn');
+        const demoModal = document.getElementById('demoModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const demoVideoIframe = document.getElementById('demoVideoIframe');
+
+        function openModal() {
+            demoModal.classList.remove('hidden');
+            setTimeout(() => {
+                demoModal.classList.remove('opacity-0');
+            }, 10);
+            // Sample YouTube Embed
+            demoVideoIframe.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+        }
+
+        function closeModal() {
+            demoModal.classList.add('opacity-0');
+            setTimeout(() => {
+                demoModal.classList.add('hidden');
+                demoVideoIframe.src = "";
+            }, 300);
+        }
+
+        watchDemoBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        demoModal.addEventListener('click', (e) => {
+            if (e.target === demoModal) closeModal();
+        });
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const bgClass = type === 'success' 
+                ? 'bg-slate-900 text-white border-brand-500' 
+                : 'bg-brand-600 text-white border-brand-300';
+
+            toast.className = `pointer-events-auto flex items-center gap-3 px-5 py-3.5 rounded-xl border shadow-xl text-sm font-medium transition-all duration-300 transform translate-x-10 opacity-0 ${bgClass}`;
+            
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-400' : 'fa-circle-info'} text-lg"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-x-10', 'opacity-0');
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-10');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function handleCtaClick(actionName) {
+            showToast(`Action "${actionName}" triggered! Welcome to Nexus.`);
+        }
+
+        const newsletterForm = document.getElementById('newsletterForm');
+        const emailInput = document.getElementById('emailInput');
+
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (emailInput.value.trim()) {
+                showToast(`Subscribed successfully with ${emailInput.value}!`);
+                emailInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
